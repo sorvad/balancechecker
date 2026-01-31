@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
-    <link rel="manifest" href="manifest.json">
     <title>Balance Checker</title>
     <style>
         :root {
@@ -330,7 +329,7 @@
                             <th class="hide-mobile">Frequency</th>
                             <th>Amount</th>
                             <th>Balance</th>
-                            <th class="hide-mobile">Date</th>
+                            <th>Date</th>
                         </tr>
                     </thead>
                     <tbody id="transactionsBody"></tbody>
@@ -343,12 +342,39 @@
 
     <script>
     // ============================================================
-    // SERVICE WORKER REGISTRATION
+    // INLINE SERVICE WORKER - no external file needed
     // ============================================================
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(() => {
-            console.log('Service worker registered.');
-        }).catch(e => console.log('SW registration failed:', e));
+        const swCode = `
+            const CACHE = 'bc-v3';
+            self.addEventListener('install', e => {
+                self.skipWaiting();
+                e.waitUntil(
+                    caches.open(CACHE).then(c => c.add(location.href))
+                );
+            });
+            self.addEventListener('activate', e => {
+                e.waitUntil(
+                    caches.keys().then(keys =>
+                        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+                    ).then(() => self.clients.claim())
+                );
+            });
+            self.addEventListener('fetch', e => {
+                e.respondWith(
+                    caches.match(e.request).then(cached => cached || fetch(e.request).then(res => {
+                        if (!res.ok) return res;
+                        const clone = res.clone();
+                        caches.open(CACHE).then(c => c.put(e.request, clone));
+                        return res;
+                    })).catch(() => caches.match(location.href))
+                );
+            });
+        `;
+        const blob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(blob)).then(() => {
+            console.log('Service worker registered (inline)');
+        }).catch(e => console.log('SW failed:', e));
     }
 
     // ============================================================
@@ -596,7 +622,7 @@
                     <td class="frequency hide-mobile">${r.transaction.frequency}</td>
                     <td class="amount ${r.transaction.direction === 'OUT' ? 'negative' : 'positive'}">£${r.transaction.amount.toFixed(2)}</td>
                     <td class="balance-col ${r.balance < -2000 ? 'warning' : ''}">£${r.balance.toFixed(2)}</td>
-                    <td class="hide-mobile">${r.date.toLocaleDateString('en-GB')}</td>
+                    <td>${r.date.toLocaleDateString('en-GB')}</td>
                 `;
             });
 
