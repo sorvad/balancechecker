@@ -1,10 +1,10 @@
 {
-  "id": "/",
+  "id": "/balancechecker/",
   "name": "Balance Checker",
   "short_name": "Balance",
   "description": "Financial projection system for tracking account balance",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/balancechecker/",
+  "scope": "/balancechecker/",
   "display": "standalone",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
