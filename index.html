@@ -616,13 +616,16 @@
                 if (r.transaction.direction === 'IN') row.classList.add('income');
                 if (r.balance < -2000) row.classList.add('overdraft');
 
+                const dateStr = r.date.toLocaleDateString('en-GB');
+                console.log('Adding row:', r.transaction.name, 'Date:', dateStr);
+
                 row.innerHTML = `
                     <td>${r.transaction.name}</td>
                     <td><span class="direction-badge direction-${r.transaction.direction.toLowerCase()}">${r.transaction.direction}</span></td>
                     <td class="frequency hide-mobile">${r.transaction.frequency}</td>
                     <td class="amount ${r.transaction.direction === 'OUT' ? 'negative' : 'positive'}">£${r.transaction.amount.toFixed(2)}</td>
                     <td class="balance-col ${r.balance < -2000 ? 'warning' : ''}">£${r.balance.toFixed(2)}</td>
-                    <td>${r.date.toLocaleDateString('en-GB')}</td>
+                    <td style="font-weight:bold;color:var(--accent-green);">${dateStr}</td>
                 `;
             });
 
