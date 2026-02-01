@@ -73,7 +73,6 @@
 
         .header-btn {
             padding: 10px 15px;
-            margin:2px;
             font-family: 'Courier New', Courier, monospace;
             font-size: 12px;
             font-weight: 700;
@@ -477,6 +476,47 @@
                         <label for="transDay">Day of Month (1-31)</label>
                         <input type="number" id="transDay" min="1" max="31" value="1">
                     </div>
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label>Skip Months (optional)</label>
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 5px;">
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="1"> Jan
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="2"> Feb
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="3"> Mar
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="4"> Apr
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="5"> May
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="6"> Jun
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="7"> Jul
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="8"> Aug
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="9"> Sep
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="10"> Oct
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="11"> Nov
+                            </label>
+                            <label style="font-size: 11px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                                <input type="checkbox" class="skip-month" value="12"> Dec
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="conditional-fields" id="threeMonthlyFields">
@@ -565,7 +605,7 @@
         { type: "Monthly", name: "Mortgage", dir: "OUT", amt: 240, day: 28 },
         { type: "Monthly", name: "Phones", dir: "OUT", amt: 20, day: 27 },
         { type: "Monthly", name: "Water", dir: "OUT", amt: 19, day: 1 },
-        { type: "Monthly", name: "Council Tax", dir: "OUT", amt: 143, day: 16 },
+        { type: "Monthly", name: "Council Tax", dir: "OUT", amt: 143, day: 16, skipMonths: [2, 3] },
         { type: "Monthly", name: "House Ins", dir: "OUT", amt: 17, day: 3 },
         { type: "Monthly", name: "Credit Cards", dir: "OUT", amt: 3, day: 1 },
         { type: "Monthly", name: "Car Tax", dir: "OUT", amt: 14, day: 1 },
@@ -631,15 +671,19 @@
     }
 
     class Monthly extends Transaction {
-        constructor(name, dir, amt, day) {
+        constructor(name, dir, amt, day, skipMonths = []) {
             super(name, dir, amt);
             this.day = day;
+            this.skipMonths = skipMonths;
         }
         get freq() {
             const s = this.day >= 11 && this.day <= 13 ? 'th' : ['th','st','nd','rd'][this.day%10] || 'th';
             return `Monthly (${this.day}${s})`;
         }
         test(d) {
+            // Skip if this month is in the skipMonths array (1-12 format)
+            if (this.skipMonths.includes(d.getMonth() + 1)) return false;
+            
             const dow = d.getDay();
             const weekend = dow === 0 || dow === 6;
             if (this.dir === 'IN') {
@@ -707,7 +751,7 @@
         return data.map(t => {
             switch (t.type) {
                 case 'Daily': return new Daily(t.name, t.dir, t.amt);
-                case 'Monthly': return new Monthly(t.name, t.dir, t.amt, t.day);
+                case 'Monthly': return new Monthly(t.name, t.dir, t.amt, t.day, t.skipMonths || []);
                 case 'EndMonth': return new EndMonth(t.name, t.dir, t.amt);
                 case 'ThreeMonthly': return new ThreeMonthly(t.name, t.dir, t.amt, t.day, t.startMon);
                 case 'Yearly': return new Yearly(t.name, t.dir, t.amt, t.day, t.mon);
@@ -792,7 +836,13 @@
     function getFrequencyLabel(t) {
         switch (t.type) {
             case 'Daily': return 'Daily';
-            case 'Monthly': return `Monthly (${t.day}${getOrdinal(t.day)})`;
+            case 'Monthly': 
+                let label = `Monthly (${t.day}${getOrdinal(t.day)})`;
+                if (t.skipMonths && t.skipMonths.length > 0) {
+                    const skipNames = t.skipMonths.map(m => new Date(2000, m-1).toLocaleDateString('en',{month:'short'})).join(', ');
+                    label += ` skip ${skipNames}`;
+                }
+                return label;
             case 'EndMonth': return 'End of Month';
             case 'ThreeMonthly':
                 const ms = [0,3,6,9].map(o => new Date(2000, (t.startMon-1+o)%12).toLocaleDateString('en',{month:'short'})).join(', ');
@@ -814,6 +864,8 @@
         document.getElementById('editIndex').value = -1;
         document.getElementById('transForm').reset();
         document.getElementById('transType').value = 'Monthly';
+        // Reset all skip month checkboxes
+        document.querySelectorAll('.skip-month').forEach(cb => cb.checked = false);
         updateConditionalFields();
         document.getElementById('transModal').classList.add('show');
     }
@@ -827,8 +879,18 @@
         document.getElementById('transAmt').value = t.amt;
         document.getElementById('transType').value = t.type;
 
+        // Reset all skip month checkboxes first
+        document.querySelectorAll('.skip-month').forEach(cb => cb.checked = false);
+
         if (t.type === 'Monthly') {
             document.getElementById('transDay').value = t.day;
+            // Set skip months checkboxes
+            if (t.skipMonths && t.skipMonths.length > 0) {
+                t.skipMonths.forEach(m => {
+                    const cb = document.querySelector(`.skip-month[value="${m}"]`);
+                    if (cb) cb.checked = true;
+                });
+            }
         } else if (t.type === 'ThreeMonthly') {
             document.getElementById('transDay3').value = t.day;
             document.getElementById('transStartMon').value = t.startMon;
@@ -867,6 +929,14 @@
 
         if (type === 'Monthly') {
             newTrans.day = parseInt(document.getElementById('transDay').value);
+            // Get skip months from checkboxes
+            const skipMonths = [];
+            document.querySelectorAll('.skip-month:checked').forEach(cb => {
+                skipMonths.push(parseInt(cb.value));
+            });
+            if (skipMonths.length > 0) {
+                newTrans.skipMonths = skipMonths;
+            }
         } else if (type === 'ThreeMonthly') {
             newTrans.day = parseInt(document.getElementById('transDay3').value);
             newTrans.startMon = parseInt(document.getElementById('transStartMon').value);
