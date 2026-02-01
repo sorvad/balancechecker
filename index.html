@@ -245,9 +245,20 @@
     </div>
 
     <script>
-    // Service Worker
+    // Service Worker Registration
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('✅ ServiceWorker registered successfully');
+                    console.log('Scope:', registration.scope);
+                })
+                .catch(err => {
+                    console.error('❌ ServiceWorker registration failed:', err);
+                });
+        });
+    } else {
+        console.warn('⚠️ Service Workers not supported in this browser');
     }
 
     // Classes
