@@ -15,6 +15,7 @@
             --text-secondary: #a0a0a0;
             --accent-green: #00ff41;
             --accent-red: #ff1744;
+            --accent-yellow: #ffc107;
             --border: #333;
         }
 
@@ -42,6 +43,11 @@
             padding: 20px;
             margin-bottom: 30px;
             background: var(--bg-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         h1 {
@@ -56,6 +62,26 @@
             font-size: 14px;
             margin-top: 8px;
         }
+
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .header-btn {
+            padding: 10px 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            font-weight: 700;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border);
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .header-btn:hover { border-color: var(--accent-green); }
+        .header-btn.active { border-color: var(--accent-green); background: var(--bg-secondary); }
 
         .input-section {
             background: var(--bg-secondary);
@@ -73,19 +99,25 @@
             font-size: 12px;
         }
 
-        input[type="number"] {
+        input[type="number"], input[type="text"], select {
             width: 100%;
             padding: 15px;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 18px;
+            font-size: 16px;
             background: var(--bg-primary);
             border: 2px solid var(--border);
             color: var(--text-primary);
+            margin-bottom: 15px;
         }
 
-        input[type="number"]:focus {
+        input:focus, select:focus {
             border-color: var(--accent-green);
             outline: none;
+        }
+
+        select option {
+            background: var(--bg-primary);
+            color: var(--text-primary);
         }
 
         button {
@@ -99,7 +131,7 @@
             border: none;
             cursor: pointer;
             text-transform: uppercase;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
         button:active { transform: scale(0.98); }
@@ -108,6 +140,18 @@
             background: var(--bg-tertiary);
             color: var(--text-primary);
             border: 2px solid var(--border);
+        }
+
+        button.danger {
+            background: var(--accent-red);
+            color: var(--text-primary);
+        }
+
+        button.small {
+            width: auto;
+            padding: 5px 10px;
+            font-size: 11px;
+            margin: 0;
         }
 
         .results { display: none; }
@@ -191,19 +235,148 @@
         .bal { font-weight: 700; }
         .bal.warn { color: var(--accent-red); }
 
+        /* Transaction Editor Styles */
+        .editor-section {
+            display: none;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .editor-section.show { display: block; }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .editor-header h2 {
+            color: var(--accent-green);
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .trans-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .trans-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            background: var(--bg-primary);
+        }
+
+        .trans-item:hover { border-color: var(--accent-green); }
+
+        .trans-info {
+            flex: 1;
+        }
+
+        .trans-name {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .trans-details {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .trans-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+        }
+
+        .conditional-fields {
+            display: none;
+        }
+
+        .conditional-fields.show {
+            display: block;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-green);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal h3 {
+            color: var(--accent-green);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
         @media (max-width: 768px) {
             body { padding: 10px; }
             table { font-size: 11px; }
             th, td { padding: 8px 4px; }
             .hide-mobile { display: none; }
+            header { flex-direction: column; align-items: flex-start; }
+            .header-buttons { width: 100%; }
+            .header-btn { flex: 1; text-align: center; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Balance Checker</h1>
-            <div class="subtitle">Projects from tomorrow through end of month</div>
+            <div>
+                <h1>Balance Checker</h1>
+                <div class="subtitle">Projects from tomorrow through end of month</div>
+            </div>
+            <div class="header-buttons">
+                <button class="header-btn active" id="calcTab" onclick="showTab('calc')">Calculate</button>
+                <button class="header-btn" id="editTab" onclick="showTab('edit')">Edit Data</button>
+            </div>
         </header>
 
         <div class="input-section" id="inputSection">
@@ -242,6 +415,127 @@
 
             <button class="secondary" onclick="reset()">New Calculation</button>
         </div>
+
+        <!-- Transaction Editor Section -->
+        <div class="editor-section" id="editorSection">
+            <div class="editor-header">
+                <h2>Manage Transactions</h2>
+                <button class="small" onclick="openAddModal()">+ Add New</button>
+            </div>
+
+            <div class="trans-list" id="transList"></div>
+
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="secondary" onclick="exportData()" style="flex: 1; min-width: 150px;">Export JSON</button>
+                <button class="secondary" onclick="document.getElementById('importFile').click()" style="flex: 1; min-width: 150px;">Import JSON</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                <button class="danger" onclick="resetToDefaults()" style="flex: 1; min-width: 150px;">Reset to Defaults</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div class="modal-overlay" id="transModal">
+        <div class="modal">
+            <h3 id="modalTitle">Add Transaction</h3>
+            <form id="transForm" onsubmit="saveTransaction(event)">
+                <input type="hidden" id="editIndex" value="-1">
+
+                <div class="form-group">
+                    <label for="transName">Name</label>
+                    <input type="text" id="transName" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transDir">Direction</label>
+                        <select id="transDir" required>
+                            <option value="OUT">OUT (Expense)</option>
+                            <option value="IN">IN (Income)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transAmt">Amount (£)</label>
+                        <input type="number" id="transAmt" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="transType">Frequency Type</label>
+                    <select id="transType" required onchange="updateConditionalFields()">
+                        <option value="Daily">Daily</option>
+                        <option value="Monthly">Monthly (specific day)</option>
+                        <option value="EndMonth">End of Month</option>
+                        <option value="ThreeMonthly">Every 3 Months</option>
+                        <option value="Yearly">Yearly</option>
+                    </select>
+                </div>
+
+                <div class="conditional-fields" id="monthlyFields">
+                    <div class="form-group">
+                        <label for="transDay">Day of Month (1-31)</label>
+                        <input type="number" id="transDay" min="1" max="31" value="1">
+                    </div>
+                </div>
+
+                <div class="conditional-fields" id="threeMonthlyFields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="transDay3">Day of Month</label>
+                            <input type="number" id="transDay3" min="1" max="31" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="transStartMon">Starting Month</label>
+                            <select id="transStartMon">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="conditional-fields" id="yearlyFields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="transDayY">Day</label>
+                            <input type="number" id="transDayY" min="1" max="31" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="transMonY">Month</label>
+                            <select id="transMonY">
+                                <option value="1">January</option>
+                                <option value="2">February</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12">December</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" style="flex: 1;">Save</button>
+                    <button type="button" class="secondary" onclick="closeModal()" style="flex: 1;">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script>
@@ -251,17 +545,70 @@
             navigator.serviceWorker.register('./sw.js')
                 .then(registration => {
                     console.log('✅ ServiceWorker registered successfully');
-                    console.log('Scope:', registration.scope);
                 })
                 .catch(err => {
                     console.error('❌ ServiceWorker registration failed:', err);
                 });
         });
-    } else {
-        console.warn('⚠️ Service Workers not supported in this browser');
     }
 
-    // Classes
+    // Default transactions data
+    const DEFAULT_TRANSACTIONS = [
+        { type: "Daily", name: "Weekly Shop", dir: "OUT", amt: 27 },
+        { type: "Daily", name: "Petrol", dir: "OUT", amt: 3.6 },
+        { type: "Monthly", name: "TV License", dir: "OUT", amt: 13, day: 1 },
+        { type: "Monthly", name: "Internet", dir: "OUT", amt: 24, day: 15 },
+        { type: "Monthly", name: "Google Drive", dir: "OUT", amt: 7.99, day: 11 },
+        { type: "Monthly", name: "Gas & Elec", dir: "OUT", amt: 215, day: 1 },
+        { type: "Monthly", name: "Car Ins", dir: "OUT", amt: 22, day: 8 },
+        { type: "Monthly", name: "Mortgage", dir: "OUT", amt: 240, day: 28 },
+        { type: "Monthly", name: "Phones", dir: "OUT", amt: 20, day: 27 },
+        { type: "Monthly", name: "Water", dir: "OUT", amt: 19, day: 1 },
+        { type: "Monthly", name: "Council Tax", dir: "OUT", amt: 143, day: 16 },
+        { type: "Monthly", name: "House Ins", dir: "OUT", amt: 17, day: 3 },
+        { type: "Monthly", name: "Credit Cards", dir: "OUT", amt: 3, day: 1 },
+        { type: "Monthly", name: "Car Tax", dir: "OUT", amt: 14, day: 1 },
+        { type: "Monthly", name: "Credit Debt", dir: "OUT", amt: 11, day: 27 },
+        { type: "Monthly", name: "Lotto", dir: "OUT", amt: 10, day: 24 },
+        { type: "Monthly", name: "Boiler", dir: "OUT", amt: 25, day: 22 },
+        { type: "Monthly", name: "Disney+", dir: "OUT", amt: 9, day: 24 },
+        { type: "Monthly", name: "Netflix", dir: "OUT", amt: 11, day: 22 },
+        { type: "Monthly", name: "AA Home", dir: "OUT", amt: 31, day: 25 },
+        { type: "Monthly", name: "Bus Pass", dir: "OUT", amt: 78, day: 4 },
+        { type: "Monthly", name: "Trust Fund", dir: "OUT", amt: 50, day: 1 },
+        { type: "ThreeMonthly", name: "Hosting", dir: "OUT", amt: 60, day: 25, startMon: 1 },
+        { type: "Yearly", name: "Domain 1", dir: "OUT", amt: 35, day: 14, mon: 4 },
+        { type: "Yearly", name: "Domain 2", dir: "OUT", amt: 15, day: 28, mon: 3 },
+        { type: "EndMonth", name: "Wage", dir: "IN", amt: 2260 },
+        { type: "Monthly", name: "Pension", dir: "IN", amt: 500, day: 9 },
+        { type: "Monthly", name: "Rent", dir: "IN", amt: 220, day: 28 }
+    ];
+
+    // Storage key
+    const STORAGE_KEY = 'balanceChecker_transactions';
+
+    // Load transactions from localStorage or use defaults
+    function loadTransactions() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch (e) {
+                console.error('Failed to parse stored transactions:', e);
+            }
+        }
+        return [...DEFAULT_TRANSACTIONS];
+    }
+
+    // Save transactions to localStorage
+    function saveTransactions(data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    // Current transaction data
+    let transactionData = loadTransactions();
+
+    // Transaction Classes (same as before)
     class Transaction {
         constructor(name, dir, amt) {
             this.name = name;
@@ -354,40 +701,23 @@
         }
     }
 
-    // Transactions
-    const trans = [
-        new Daily("Weekly Shop", "OUT", 27),
-        new Daily("Petrol", "OUT", 3.6),
-        new Monthly("TV License", "OUT", 13, 1),
-        new Monthly("Internet", "OUT", 24, 15),
-        new Monthly("Google Drive", "OUT", 7.99, 11),
-        new Monthly("Gas & Elec", "OUT", 215, 1),
-        new Monthly("Car Ins", "OUT", 22, 8),
-        new Monthly("Mortgage", "OUT", 240, 28),
-        new Monthly("Phones", "OUT", 20, 27),
-        new Monthly("Water", "OUT", 19, 1),
-        new Monthly("Council Tax", "OUT", 143, 16),
-        new Monthly("House Ins", "OUT", 17, 3),
-        new Monthly("Credit Cards", "OUT", 3, 1),
-        new Monthly("Car Tax", "OUT", 14, 1),
-        new Monthly("Credit Debt", "OUT", 11, 27),
-        new Monthly("Lotto", "OUT", 10, 24),
-        new Monthly("Boiler", "OUT", 25, 22),
-        new Monthly("Disney+", "OUT", 9, 24),
-        new Monthly("Netflix", "OUT", 11, 22),
-        new Monthly("AA Home", "OUT", 31, 25),
-        new Monthly("Bus Pass", "OUT", 78, 4),
-        new Monthly("Trust Fund", "OUT", 50, 1),
-        new ThreeMonthly("Hosting", "OUT", 60, 25, 1),
-        new Yearly("Domain 1", "OUT", 35, 14, 4),
-        new Yearly("Domain 2", "OUT", 15, 28, 3),
-        new EndMonth("Wage", "IN", 2260),
-        new Monthly("Pension", "IN", 500, 9),
-        new Monthly("Rent", "IN", 220, 28)
-    ];
+    // Convert data to Transaction objects
+    function dataToTransactions(data) {
+        return data.map(t => {
+            switch (t.type) {
+                case 'Daily': return new Daily(t.name, t.dir, t.amt);
+                case 'Monthly': return new Monthly(t.name, t.dir, t.amt, t.day);
+                case 'EndMonth': return new EndMonth(t.name, t.dir, t.amt);
+                case 'ThreeMonthly': return new ThreeMonthly(t.name, t.dir, t.amt, t.day, t.startMon);
+                case 'Yearly': return new Yearly(t.name, t.dir, t.amt, t.day, t.mon);
+                default: return new Daily(t.name, t.dir, t.amt);
+            }
+        });
+    }
 
-    // Process
+    // Process transactions
     function process(bal, start) {
+        const trans = dataToTransactions(transactionData);
         const res = [];
         const grp = {};
         const last = new Date(start.getFullYear(), start.getMonth()+1, 0);
@@ -416,7 +746,198 @@
         return res;
     }
 
-    // UI
+    // Tab switching
+    function showTab(tab) {
+        document.getElementById('calcTab').classList.toggle('active', tab === 'calc');
+        document.getElementById('editTab').classList.toggle('active', tab === 'edit');
+
+        document.getElementById('inputSection').style.display = tab === 'calc' ? 'block' : 'none';
+        document.getElementById('results').classList.remove('show');
+        document.getElementById('editorSection').classList.toggle('show', tab === 'edit');
+
+        if (tab === 'edit') {
+            renderTransactionList();
+        }
+    }
+
+    // Render transaction list in editor
+    function renderTransactionList() {
+        const list = document.getElementById('transList');
+        list.innerHTML = '';
+
+        transactionData.forEach((t, index) => {
+            const item = document.createElement('div');
+            item.className = 'trans-item';
+            item.innerHTML = `
+                <div class="trans-info">
+                    <div class="trans-name">
+                        <span class="dir-badge dir-${t.dir.toLowerCase()}">${t.dir}</span>
+                        ${t.name}
+                    </div>
+                    <div class="trans-details">
+                        £${t.amt.toFixed(2)} · ${getFrequencyLabel(t)}
+                    </div>
+                </div>
+                <div class="trans-actions">
+                    <button class="small" onclick="editTransaction(${index})">Edit</button>
+                    <button class="small danger" onclick="deleteTransaction(${index})">Del</button>
+                </div>
+            `;
+            list.appendChild(item);
+        });
+    }
+
+    // Get frequency label for display
+    function getFrequencyLabel(t) {
+        switch (t.type) {
+            case 'Daily': return 'Daily';
+            case 'Monthly': return `Monthly (${t.day}${getOrdinal(t.day)})`;
+            case 'EndMonth': return 'End of Month';
+            case 'ThreeMonthly':
+                const ms = [0,3,6,9].map(o => new Date(2000, (t.startMon-1+o)%12).toLocaleDateString('en',{month:'short'})).join(', ');
+                return `3 Monthly (${ms})`;
+            case 'Yearly':
+                const mn = new Date(2000, t.mon-1).toLocaleDateString('en',{month:'short'});
+                return `Yearly (${t.day}${getOrdinal(t.day)} ${mn})`;
+            default: return t.type;
+        }
+    }
+
+    function getOrdinal(n) {
+        return n >= 11 && n <= 13 ? 'th' : ['th','st','nd','rd'][n%10] || 'th';
+    }
+
+    // Modal functions
+    function openAddModal() {
+        document.getElementById('modalTitle').textContent = 'Add Transaction';
+        document.getElementById('editIndex').value = -1;
+        document.getElementById('transForm').reset();
+        document.getElementById('transType').value = 'Monthly';
+        updateConditionalFields();
+        document.getElementById('transModal').classList.add('show');
+    }
+
+    function editTransaction(index) {
+        const t = transactionData[index];
+        document.getElementById('modalTitle').textContent = 'Edit Transaction';
+        document.getElementById('editIndex').value = index;
+        document.getElementById('transName').value = t.name;
+        document.getElementById('transDir').value = t.dir;
+        document.getElementById('transAmt').value = t.amt;
+        document.getElementById('transType').value = t.type;
+
+        if (t.type === 'Monthly') {
+            document.getElementById('transDay').value = t.day;
+        } else if (t.type === 'ThreeMonthly') {
+            document.getElementById('transDay3').value = t.day;
+            document.getElementById('transStartMon').value = t.startMon;
+        } else if (t.type === 'Yearly') {
+            document.getElementById('transDayY').value = t.day;
+            document.getElementById('transMonY').value = t.mon;
+        }
+
+        updateConditionalFields();
+        document.getElementById('transModal').classList.add('show');
+    }
+
+    function closeModal() {
+        document.getElementById('transModal').classList.remove('show');
+    }
+
+    function updateConditionalFields() {
+        const type = document.getElementById('transType').value;
+        document.getElementById('monthlyFields').classList.toggle('show', type === 'Monthly');
+        document.getElementById('threeMonthlyFields').classList.toggle('show', type === 'ThreeMonthly');
+        document.getElementById('yearlyFields').classList.toggle('show', type === 'Yearly');
+    }
+
+    function saveTransaction(e) {
+        e.preventDefault();
+
+        const index = parseInt(document.getElementById('editIndex').value);
+        const type = document.getElementById('transType').value;
+
+        const newTrans = {
+            type: type,
+            name: document.getElementById('transName').value.trim(),
+            dir: document.getElementById('transDir').value,
+            amt: parseFloat(document.getElementById('transAmt').value)
+        };
+
+        if (type === 'Monthly') {
+            newTrans.day = parseInt(document.getElementById('transDay').value);
+        } else if (type === 'ThreeMonthly') {
+            newTrans.day = parseInt(document.getElementById('transDay3').value);
+            newTrans.startMon = parseInt(document.getElementById('transStartMon').value);
+        } else if (type === 'Yearly') {
+            newTrans.day = parseInt(document.getElementById('transDayY').value);
+            newTrans.mon = parseInt(document.getElementById('transMonY').value);
+        }
+
+        if (index === -1) {
+            transactionData.push(newTrans);
+        } else {
+            transactionData[index] = newTrans;
+        }
+
+        saveTransactions(transactionData);
+        closeModal();
+        renderTransactionList();
+    }
+
+    function deleteTransaction(index) {
+        if (confirm(`Delete "${transactionData[index].name}"?`)) {
+            transactionData.splice(index, 1);
+            saveTransactions(transactionData);
+            renderTransactionList();
+        }
+    }
+
+    // Export/Import
+    function exportData() {
+        const dataStr = JSON.stringify(transactionData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'balance-checker-data.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function importData(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            try {
+                const imported = JSON.parse(evt.target.result);
+                if (Array.isArray(imported)) {
+                    transactionData = imported;
+                    saveTransactions(transactionData);
+                    renderTransactionList();
+                    alert('Data imported successfully!');
+                } else {
+                    alert('Invalid data format');
+                }
+            } catch (err) {
+                alert('Failed to parse JSON file');
+            }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
+    }
+
+    function resetToDefaults() {
+        if (confirm('Reset all transactions to defaults? This cannot be undone.')) {
+            transactionData = [...DEFAULT_TRANSACTIONS];
+            saveTransactions(transactionData);
+            renderTransactionList();
+        }
+    }
+
+    // Calculator UI
     function calc() {
         const val = document.getElementById('balance').value;
         if (!val) return alert('Enter balance');
@@ -460,8 +981,15 @@
         document.getElementById('balance').focus();
     }
 
+    // Keyboard shortcuts
     document.addEventListener('keydown', e => {
         if (e.key === 'Enter' && document.activeElement.id === 'balance') calc();
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // Close modal on overlay click
+    document.getElementById('transModal').addEventListener('click', e => {
+        if (e.target.id === 'transModal') closeModal();
     });
     </script>
 </body>
